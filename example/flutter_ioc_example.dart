@@ -19,7 +19,7 @@ void main() {
   // registerUsingRegisterLazySingleton();
   // registerUsingRegisterSingleton();
 
-  final Counter counter = IocContainer.container<Counter>();
+  final Counter counter = IocContainer.container.get<Counter>();
   final Counter zeroBasedCounter =
       IocContainer.container<Counter>(instanceName: kZeroBaseCounterName);
   final Counter forthyTwoBasedCounter =
