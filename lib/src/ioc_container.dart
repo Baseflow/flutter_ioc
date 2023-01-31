@@ -51,6 +51,37 @@ abstract class IocContainer {
     String? instanceName,
   });
 
+  /// Gets an instance matching the specified type [T].
+  ///
+  /// Use the [instanceName] parameter to fetch a specific instance that was
+  /// registered with the same name and type.
+  ///
+  /// ```dart
+  /// class Counter {
+  ///   Counter({this.count = 0});
+  ///
+  ///   int count;
+  ///
+  ///   void increment() => count++;
+  ///   void decrement() => count--;
+  /// }
+  ///
+  /// // Register a factory method to create a new instance of the Counter
+  /// // class starting at 0.
+  /// IocContainer.container.registerFactory<Counter>(() => Counter(), instanceName: 'zero_based_counter');
+  /// // Register a factory method to create a new instance of the Counter
+  /// // class starting at 1.
+  /// IocContainer.container.registerFactory<Counter>(() => Counter(count: 1), instanceName: 'one_based_counter');
+  ///
+  /// // Get a new zero-based Counter instance from the IocContainer.
+  /// final Counter zeroBasedCounter = IocContainer.container<Counter>(instanceName: 'zero_based_counter');
+  /// // Get a new one-based Counter instance from the IocContainer.
+  /// final Counter oneBasedCounter = IocContainer.container<Counter>(instanceName: 'one_based_counter');
+  /// ```
+  T call<T extends Object>({
+    String? instanceName,
+  });
+
   /// Registers a factory method creating a new instance of the specified type [T].
   ///
   /// The registered factory method is called each time the [IocContainer.get]
@@ -222,6 +253,11 @@ class _GetItIocContainer implements IocContainer {
     String? instanceName,
   }) =>
       _container.get<T>(instanceName: instanceName);
+
+  @override
+  T call<T extends Object>({String? instanceName}) {
+    return get<T>(instanceName: instanceName);
+  }
 
   @override
   void registerFactory<T extends Object>(

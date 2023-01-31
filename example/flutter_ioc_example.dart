@@ -19,11 +19,11 @@ void main() {
   // registerUsingRegisterLazySingleton();
   // registerUsingRegisterSingleton();
 
-  final Counter counter = IocContainer.container.get<Counter>();
+  final Counter counter = IocContainer.container<Counter>();
   final Counter zeroBasedCounter =
-      IocContainer.container.get<Counter>(instanceName: kZeroBaseCounterName);
-  final Counter forthyTwoBasedCounter = IocContainer.container
-      .get<Counter>(instanceName: kForthyTwoBaseCounterName);
+      IocContainer.container<Counter>(instanceName: kZeroBaseCounterName);
+  final Counter forthyTwoBasedCounter =
+      IocContainer.container<Counter>(instanceName: kForthyTwoBaseCounterName);
 
   counter.increment();
   print('Counter: ${counter.count}');
