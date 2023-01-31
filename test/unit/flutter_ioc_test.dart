@@ -24,6 +24,17 @@ void main() {
     });
 
     test(
+        'Registered mock implementation of call() should throw unimplemented error',
+        () {
+      IocContainer.registerContainer(_MockIocContainer());
+
+      expect(
+        () => IocContainer.container(),
+        throwsUnimplementedError,
+      );
+    });
+
+    test(
         'Registered mock implementation of registerFactory() should throw unimplemented error',
         () {
       IocContainer.registerContainer(_MockIocContainer());
@@ -61,6 +72,12 @@ void main() {
 class _MockIocContainer extends IocContainer {
   @override
   T get<T extends Object>({String? instanceName}) {
+    throw UnimplementedError(
+        '_MockIocContainer.get has no mock implementation.');
+  }
+
+  @override
+  T call<T extends Object>({String? instanceName}) {
     throw UnimplementedError(
         '_MockIocContainer.get has no mock implementation.');
   }
