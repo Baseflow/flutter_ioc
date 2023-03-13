@@ -97,9 +97,16 @@ abstract class IocContainer {
   /// // Get a new one-based Counter instance from the IocContainer.
   /// final Counter oneBasedCounter = IocContainer.container.get<Counter>(instanceName: 'one_based_counter');
   /// ```
+  ///
+  /// When set to `true` the [allowReassignment] parameter allows developers to
+  /// replace an existing registration with the one supplied. By default this
+  /// value is `false` as it would normally not be required and in most cases is
+  /// a bug. However in some special cases this might be valuable and allows
+  /// developers to override an earlier registered factory.
   void registerFactory<T extends Object>(
     FactoryFunc<T> func, {
     String? instanceName,
+    bool allowReassignment = false,
   });
 
   /// Registers a factory method creating a new instance of the specified type [T].
@@ -153,9 +160,15 @@ abstract class IocContainer {
   /// // Get a new ten-based Counter instance from the IocContainer.
   /// final Counter tenBasedCounter = IocContainer.container.get<Counter>(instanceName: 'ten_based_counter');
   /// ```
+  /// When set to `true` the [allowReassignment] parameter allows developers to
+  /// replace an existing registration with the one supplied. By default this
+  /// value is `false` as it would normally not be required and in most cases is
+  /// a bug. However in some special cases this might be valuable and allows
+  /// developers to override an earlier registered singleton.
   void registerLazySingleton<T extends Object>(
     FactoryFunc<T> func, {
     String? instanceName,
+    bool allowReassignment = false,
   });
 
   /// Registers a specific instance of type [T].
@@ -202,9 +215,16 @@ abstract class IocContainer {
   /// // Get the forthytwo-based Counter instance from the IocContainer.
   /// final Counter forthyTwoBasedCounter = IocContainer.container.get<Counter>(instanceName: 'forthytwo_based_counter');
   /// ```
+  ///
+  /// When set to `true` the [allowReassignment] parameter allows developers to
+  /// replace an existing registration with the one supplied. By default this
+  /// value is `false` as it would normally not be required and in most cases is
+  /// a bug. However in some special cases this might be valuable and allows
+  /// developers to override an earlier registered singleton.
   void registerSingleton<T extends Object>(
     T instance, {
     String? instanceName,
+    bool allowReassignment = false,
   });
 }
 
@@ -227,20 +247,47 @@ class _GetItIocContainer implements IocContainer {
   void registerFactory<T extends Object>(
     FactoryFunc<T> func, {
     String? instanceName,
+    bool allowReassignment = false,
   }) =>
-      _container.registerFactory<T>(func, instanceName: instanceName);
+      _guardedReassignment(
+        () => _container.registerFactory<T>(func, instanceName: instanceName),
+        allowReassignment,
+      );
 
   @override
   void registerLazySingleton<T extends Object>(
     FactoryFunc<T> func, {
     String? instanceName,
+    bool allowReassignment = false,
   }) =>
-      _container.registerLazySingleton<T>(func, instanceName: instanceName);
+      _guardedReassignment(
+        () => _container.registerLazySingleton<T>(func,
+            instanceName: instanceName),
+        allowReassignment,
+      );
 
   @override
   void registerSingleton<T extends Object>(
     T instance, {
     String? instanceName,
+    bool allowReassignment = false,
   }) =>
-      _container.registerSingleton<T>(instance, instanceName: instanceName);
+      _guardedReassignment(
+        () => _container.registerSingleton<T>(instance,
+            instanceName: instanceName),
+        allowReassignment,
+      );
+
+  void _guardedReassignment(
+    void Function() register,
+    bool allowReassignment,
+  ) {
+    if (allowReassignment) {
+      _container.allowReassignment = true;
+    }
+
+    register();
+
+    _container.allowReassignment = false;
+  }
 }
