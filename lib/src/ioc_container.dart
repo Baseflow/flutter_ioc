@@ -321,7 +321,7 @@ abstract class IocContainer {
 
   /// Creates a new registation scope.
   ///
-  /// Registering types after creating a new scope they will hide any previous
+  /// Registering types after creating a new scope will hide any previous
   /// registrations of the same type. Scopes will allow for managing different
   /// live times of your Objecs. Scopes are stacked upon eachother, when an
   /// Object is retrieved it will look for it in the top most scope (the one
