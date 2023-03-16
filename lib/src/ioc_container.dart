@@ -242,12 +242,12 @@ abstract class IocContainer {
   /// // Register a new instance of the Counter class, starting at 0.
   /// IocContainer.container.registerLazySingleton<Counter>(Counter(), 'zero_based_counter');
   /// // Register a new instance of the Counter class, starting at 42.
-  /// IocContainer.container.registerLazySingleton<Counter>(Counter(count: 42), 'forthytwo_based_counter');
+  /// IocContainer.container.registerLazySingleton<Counter>(Counter(count: 42), 'fortytwo_based_counter');
   ///
   /// // Get the zero-based Counter instance from the IocContainer.
   /// final Counter zeroBasedCounter = IocContainer.container.get<Counter>(instanceName: 'zero_based_counter');
-  /// // Get the forthytwo-based Counter instance from the IocContainer.
-  /// final Counter forthyTwoBasedCounter = IocContainer.container.get<Counter>(instanceName: 'forthytwo_based_counter');
+  /// // Get the fortytwo-based Counter instance from the IocContainer.
+  /// final Counter fortyTwoBasedCounter = IocContainer.container.get<Counter>(instanceName: 'fortytwo_based_counter');
   /// ```
   ///
   /// When set to `true` the [allowReassignment] parameter allows developers to
@@ -304,7 +304,7 @@ abstract class IocContainer {
   /// // Get the Counter instance from the IocContainer.
   /// counter = IocContainer.container.get<Counter>(instanceName: 'zero_based_counter');
   ///
-  /// // Increatee the current count.
+  /// // Increment the current count.
   /// counter.increment();
   /// // The current count should be incremented to 1 as a new instance was created.
   /// print('Current count: ${counter.count}');

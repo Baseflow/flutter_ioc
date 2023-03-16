@@ -86,7 +86,8 @@ void main() {
       IocContainer.registerContainer(_MockIocContainer());
 
       expect(
-        () => IocContainer.container.onScopeChanged = (_) {},
+        () => IocContainer.container.onScopeChanged =
+            (ScopeChange scopeChanged) {},
         throwsUnimplementedError,
       );
     });
