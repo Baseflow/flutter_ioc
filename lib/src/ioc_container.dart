@@ -323,10 +323,10 @@ abstract class IocContainer {
   ///
   /// Registering types after creating a new scope will hide any previous
   /// registrations of the same type. Scopes will allow for managing different
-  /// live times of your Objecs. Scopes are stacked upon eachother, when an
+  /// live times of your Objects. Scopes are stacked upon each other, when an
   /// Object is retrieved it will look for it in the top most scope (the one
-  /// created last) first, if the Object insn't located it will look into the
-  /// next scope. This will continue untill the Object is found or until there
+  /// created last) first, if the Object isn't located it will look into the
+  /// next scope. This will continue until the Object is found or until there
   /// are no more scopes (which will result in an error).
   void createScope({
     String? scopeName,
@@ -444,14 +444,15 @@ class _GetItIocContainer implements IocContainer {
 
     _container.allowReassignment = false;
   }
-  
+
   void Function(ScopeChange scopeChange)? _onScopeChanged;
 
   @override
   void Function(ScopeChange scopeChange)? get onScopeChanged => _onScopeChanged;
 
   @override
-  set onScopeChanged(void Function(ScopeChange scopeChange)? onScopeChangedCallback) {
+  set onScopeChanged(
+      void Function(ScopeChange scopeChange)? onScopeChangedCallback) {
     _onScopeChanged = onScopeChangedCallback;
 
     _container.onScopeChanged = (bool pushed) {
