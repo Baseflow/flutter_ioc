@@ -15,25 +15,12 @@ const String kZeroBaseCounterName = 'zero_based_counter';
 const String kForthyTwoBaseCounterName = 'forthytwo_based_counter';
 
 void main() {
-  registerUsingRegisterFactory();
-  // registerUsingRegisterLazySingleton();
-  // registerUsingRegisterSingleton();
-
-  final Counter counter = IocContainer.container.get<Counter>();
-  final Counter zeroBasedCounter =
-      IocContainer.container.get<Counter>(instanceName: kZeroBaseCounterName);
-  final Counter forthyTwoBasedCounter = IocContainer.container
-      .get<Counter>(instanceName: kForthyTwoBaseCounterName);
-
-  counter.increment();
-  print('Counter: ${counter.count}');
-  zeroBasedCounter.increment();
-  print('Zero-based counter: ${zeroBasedCounter.count}');
-  forthyTwoBasedCounter.increment();
-  print('Forthy two-based counter: ${forthyTwoBasedCounter.count}');
+  exampleUsingRegisterFactory();
+  //exampleUsingRegisterLazySingleton();
+  //exampleUsingRegisterSingleton();
 }
 
-void registerUsingRegisterFactory() {
+void exampleUsingRegisterFactory() {
   // Register a factory method to create a new instance of the Counter
   // class each time `IocContainer.container.get<Counter>()` is called.
   IocContainer.container.registerFactory<Counter>(() => Counter());
@@ -45,9 +32,11 @@ void registerUsingRegisterFactory() {
   // class starting at 42.
   IocContainer.container.registerFactory<Counter>(() => Counter(count: 42),
       instanceName: kForthyTwoBaseCounterName);
+
+  interactWithCounters();
 }
 
-void registerUsingRegisterLazySingleton() {
+void exampleUsingRegisterLazySingleton() {
   // Register a factory method to create a new instance of the Counter
   // class the first time `IocContainer.container.get<Counter>()` is called.
   IocContainer.container.registerLazySingleton<Counter>(() => Counter());
@@ -60,9 +49,20 @@ void registerUsingRegisterLazySingleton() {
   IocContainer.container.registerLazySingleton<Counter>(
       () => Counter(count: 42),
       instanceName: kForthyTwoBaseCounterName);
+
+  interactWithCounters();
+
+  // Reset the lazy singletons to restart the counters.
+  IocContainer.container.resetLazySingleton<Counter>();
+  IocContainer.container
+      .resetLazySingleton<Counter>(instanceName: kZeroBaseCounterName);
+  IocContainer.container
+      .resetLazySingleton<Counter>(instanceName: kForthyTwoBaseCounterName);
+
+  interactWithCounters();
 }
 
-void registerUsingRegisterSingleton() {
+void exampleUsingRegisterSingleton() {
   // Register an instance of the Counter class which is returned when
   // the `IocContainer.container.get<Counter>()` method is called.
   IocContainer.container.registerSingleton<Counter>(Counter());
@@ -72,4 +72,19 @@ void registerUsingRegisterSingleton() {
   // Register an instance of the Counter class starting at 42.
   IocContainer.container.registerSingleton<Counter>(Counter(count: 42),
       instanceName: kForthyTwoBaseCounterName);
+}
+
+void interactWithCounters() {
+  final Counter counter = IocContainer.container.get<Counter>();
+  final Counter zeroBasedCounter =
+      IocContainer.container.get<Counter>(instanceName: kZeroBaseCounterName);
+  final Counter forthyTwoBasedCounter = IocContainer.container
+      .get<Counter>(instanceName: kForthyTwoBaseCounterName);
+
+  counter.increment();
+  print('Counter: ${counter.count}');
+  zeroBasedCounter.increment();
+  print('Zero-based counter: ${zeroBasedCounter.count}');
+  forthyTwoBasedCounter.increment();
+  print('Forthy two-based counter: ${forthyTwoBasedCounter.count}');
 }
