@@ -1,5 +1,6 @@
-A standard interface providing inversion of control services to 
-Dart or Flutter applications.
+An implementation of the flutter_ioc package using the popular 
+[GetIt](https://pub.dev/packages/get_it) service locator as backing IoC 
+container.
 
 ## Features
 
@@ -9,46 +10,72 @@ The following features are supported:
 - Register lazy singletons which are constructed the first time they are 
 requested but reuse the instance for subsequent requests.
 - Register an instance as singleton.
+- Use scopes to manage different lifetimes.
 
-All registration methods optionally support supplying a name, making it
-possible to register multiple instances of the same type using a different name.
-
-By default the `flutter_ioc` package is configured to use [get_it](https://pub.dev/packages/get_it) 
-as backing inversion of control solution. This can however be easily overriden
-using the static `IocContainer.registerContainer` method and supplying a custom
-implementation of the `IocContainer` interface.
+> **Important:** if you are integrating flutter_ioc in a Dart or Flutter 
+library please make sure to only depend on the `flutter_ioc` package. 
 
 ## Getting started
 
-To start using the `flutter_ioc` package add it as a dependency in the `pubspec.yaml`
-file running the following command:
+To start using the `flutter_ioc_get_it` package add it as a dependency in 
+the `pubspec.yaml` file running the following command:
 
 With Dart:
 ```
-dart pub add flutter_ioc
+dart pub add flutter_ioc_get_it
 ```
 
 With Flutter:
 ```
-flutter pub add flutter_ioc
+flutter pub add flutter_ioc_get_it
 ```
 
 ## Usage
 
-First make sure to import the `flutter_ioc` library:
+First make sure to import the `flutter_ioc_get_it` library:
 
 ```dart
-import 'package:flutter_ioc/flutter_ioc.dart';
+import 'package:flutter_ioc_get_it/flutter_ioc_get_it.dart';
 ```
 
-Once the library is imported the `flutter_ioc` library can be accessed through
-the `IocContainer.container` field. Below are some examples showing the diffent
+### Register specific implementation
+
+Once the library is imported, the `GetItContainer` should be registered as the
+implementation to use with the `IocContainer` library. 
+
+> **Important:** the registration step is not necessary when developing a Dart
+> or Flutter library. It would be the responsibility of the consuming application
+> to handle the registration. This will prevent tightly coupling in your library.
+>
+> Note that it is good practice to explain the dependency in the documentation 
+> of your library and inform other developers they need to register a specific
+> implementation of the `flutter_ioc` interface.
+
+It is important that the registration is done **before** the first time the
+`IocContainer.container` instance is accessed. To be sure this is done before 
+the `IocContainer.container` field is accessed, call the 
+`GetItContainer.register()` method as one of the first lines in your `main`
+function:
+
+```dart
+void main() {
+  // Register the `GetItIocContainer` as the inversion of control 
+  // implementation to be used.
+  GetItIocContainer.register();
+
+  /// Continue with the rest of your application code.
+  ...
+}
+```
+
+### Using the IocContainer library
+
+Now the `flutter_ioc` library can be accessed through the 
+`IocContainer.container` field. Below are some examples showing the diffent 
 ways objects can be registered and retrieved with the inversion of control 
 container.
 
-### Examples
-
-All the samples shown below will be referencing a very simple `Counter` class 
+The samples shown below will be referencing a very simple `Counter` class 
 that is used to demostrate the different ways to register and retrieve objects
 to and from the `IocContainer.container`. Although the implementation of this
 class in not relevant at all it could look something like this:
@@ -62,6 +89,9 @@ class Counter {
     void increment() => count++;
 }
 ```
+
+> For a working example of the snippets below, checkout the [example](example/flutter_ioc_example.dart)
+> demo application.
 
 To register the `Counter` class with the `IocContainer.container` and have it 
 return a new instance each time one is requested, use the `registerFactory` method:
