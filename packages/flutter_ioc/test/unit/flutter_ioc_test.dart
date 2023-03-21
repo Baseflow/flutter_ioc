@@ -1,11 +1,24 @@
 import 'dart:async';
 
 import 'package:flutter_ioc/flutter_ioc.dart';
-import 'package:get_it/get_it.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('IocContainer', () {
+    test(
+        'IocContainer.container should throw LateInitializationError when accessed before registering an implementation.',
+        () {
+      // Note: resulted to testing if the the output of `toString()` starts with
+      // the test "LateInitializationError" as the `LateInitializationError`
+      // type is hidden in the Dart framework and cannot be accessed.
+      expect(
+          () => IocContainer.container,
+          throwsA(isA<Error>().having(
+              (Error e) => e.toString().startsWith('LateInitializationError'),
+              'description starts with `LateInitializationError`',
+              true)));
+    });
+
     test('IocContainer.container should return registered container', () {
       final IocContainer container = _MockIocContainer();
 
@@ -125,7 +138,7 @@ class _MockIocContainer extends IocContainer {
 
   @override
   void registerFactory<T extends Object>(
-    FactoryFunc<T> func, {
+    T Function() func, {
     String? instanceName,
     bool allowReassignment = false,
   }) {
@@ -135,7 +148,7 @@ class _MockIocContainer extends IocContainer {
 
   @override
   void registerLazySingleton<T extends Object>(
-    FactoryFunc<T> func, {
+    T Function() func, {
     String? instanceName,
     bool allowReassignment = false,
     FutureOr<void> Function(T)? onDispose,
