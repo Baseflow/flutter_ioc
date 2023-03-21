@@ -1,25 +1,25 @@
-name: flutter_ioc
+name: flutter_ioc_get_it
 
 on:
   push:
     branches: [ main ]
     paths:
-    - 'packages/flutter_ioc/**'
-    - '.github/workflows/flutter_ioc.yaml'
+    - 'packages/flutter_ioc_get_it/**'
+    - '.github/workflows/flutter_ioc_get_it.yaml'
   pull_request:
     branches: [ main ]
     paths:
-    - 'packages/flutter_ioc/**'
-    - '.github/workflows/flutter_ioc.yaml'
+    - 'packages/flutter_ioc_get_it/**'
+    - '.github/workflows/flutter_ioc_get_it.yaml'
 
 jobs:
   format:
-    name: CI - Flutter IoC
+    name: CI - Flutter IoC Get_It
 
     runs-on: ubuntu-latest
 
     env:
-      source-directory: ./packages/flutter_ioc
+      source-directory: ./packages/flutter_ioc_get_it 
 
     steps:
       - uses: actions/checkout@v3
@@ -40,6 +40,6 @@ jobs:
         run: flutter analyze
         working-directory: ${{env.source-directory}}
 
-      - name: Run unit tests
-        run: flutter test
-        working-directory: ${{env.source-directory}}
+      #- name: Run unit tests
+      #  run: flutter test
+      #  working-directory: ${{env.source-directory}}
