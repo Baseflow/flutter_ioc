@@ -9,7 +9,10 @@ environment:
 
 dependencies:
   flutter_ioc:
-    path: ../flutter_ioc
+    git:
+      url: https://github.com/baseflow/flutter_ioc
+      path: packages/flutter_ioc
+      ref: flutter_ioc_v2.0.0
   get_it: ^7.2.0
 
 dev_dependencies:
