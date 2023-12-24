@@ -9,4 +9,4 @@ dependencies:
     path: ../../flutter_ioc_get_it
 
 environment:
-  sdk: '>=2.18.1 <3.0.0'
+  sdk: '>=2.18.1 <4.0.0'

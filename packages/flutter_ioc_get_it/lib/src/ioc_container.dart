@@ -75,14 +75,20 @@ class GetItIocContainer extends IocContainer {
 
   @override
   FutureOr<void> resetLazySingleton<T extends Object>({
-    Object? instance,
+    T? instance,
     String? instanceName,
     FutureOr<void> Function(T)? onDispose,
   }) =>
       _container.resetLazySingleton(
         instance: instance,
         instanceName: instanceName,
-        disposingFunction: onDispose,
+        disposingFunction: (T instance) {
+          if (onDispose == null) {
+            return null;
+          }
+
+          return onDispose(instance);
+        },
       );
 
   @override
