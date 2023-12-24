@@ -308,7 +308,7 @@ abstract class IocContainer {
   /// [onDispose] callback. This function overrides the disposing
   /// you might have provided when registering.
   FutureOr<void> resetLazySingleton<T extends Object>({
-    Object? instance,
+    T? instance,
     String? instanceName,
     FutureOr<void> Function(T)? onDispose,
   });
