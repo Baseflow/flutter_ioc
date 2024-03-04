@@ -1,3 +1,7 @@
+## 2.1.0
+
+* Adds the `Ioc` alias to allow developers to access the `IocContainer` class in a shorter way.
+
 ## 2.0.0
 
 * **BREAKING CHANGE:** Removes the hard dependency on `get_it`, which means:
