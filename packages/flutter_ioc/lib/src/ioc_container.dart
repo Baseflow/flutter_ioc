@@ -10,6 +10,10 @@ enum ScopeChange {
   removed,
 }
 
+/// A shorter alias for the [IocContainer] type. This allows developers to
+/// use the shorter `Ioc.container` syntax instead of writing the full name.
+typedef Ioc = IocContainer;
+
 /// A standard interface providing inversion of control services to Dart or
 /// Flutter applications.
 abstract class IocContainer {
