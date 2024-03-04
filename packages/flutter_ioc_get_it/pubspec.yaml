@@ -1,6 +1,6 @@
 name: flutter_ioc_get_it
 description: An implementation of the flutter_ioc package based on get_it.
-version: 1.2.0
+version: 1.2.1
 
 publish_to: none
 
@@ -12,8 +12,8 @@ dependencies:
     git:
       url: https://github.com/baseflow/flutter_ioc
       path: packages/flutter_ioc
-      ref: flutter_ioc_v2.0.0
-  get_it: ^7.6.4
+      ref: flutter_ioc_v2.1.0
+  get_it: ^7.6.7
 
 dev_dependencies:
   lints: ^2.0.0

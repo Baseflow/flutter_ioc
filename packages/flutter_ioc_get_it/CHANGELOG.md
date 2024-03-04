@@ -1,3 +1,8 @@
+## 1.2.1
+
+* Updates dependency on `flutter_ioc` to version 2.1.0.
+* Updates dependency on `get_it` to version 7.6.7.
+
 ## 1.2.0
 
 * Adds support for creating and removing scopes to the IoC container.
