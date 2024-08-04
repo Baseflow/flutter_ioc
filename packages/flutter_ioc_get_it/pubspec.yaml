@@ -10,7 +10,7 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  flutter_ioc: ^2.1.0
+  flutter_ioc: ^2.2.0
   get_it: ^7.7.0
 
 dev_dependencies:
