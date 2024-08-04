@@ -1,11 +1,15 @@
 name: flutter_ioc_get_it
 
 on:
+  workflow_dispatch:
+
   push:
     branches: [main]
     paths:
       - "packages/flutter_ioc_get_it/**"
       - ".github/workflows/flutter_ioc_get_it.yaml"
+    tags:
+      - "getit-v[0-9]+.[0-9]+.[0-9]+*"
   pull_request:
     branches: [main]
     paths:

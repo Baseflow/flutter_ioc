@@ -1,7 +1,7 @@
 name: flutter_ioc
 description: A standard interface providing inversion of control services to Dart or Flutter applications.
 repository: https://github.com/Baseflow/flutter_ioc/tree/main/packages/flutter_ioc
-version: 2.1.0
+version: 2.2.0
 topics: 
   - ioc
 

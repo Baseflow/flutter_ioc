@@ -30,6 +30,17 @@ class GetItIocContainer extends IocContainer {
       _container.get<T>(instanceName: instanceName);
 
   @override
+  Future<T> getAsync<T extends Object>({String? instanceName}) =>
+      _container.getAsync<T>(instanceName: instanceName);
+
+  @override
+  Iterable<T> getAll<T extends Object>() => _container.getAll<T>();
+
+  @override
+  Future<Iterable<T>> getAllAsync<T extends Object>() =>
+      _container.getAllAsync<T>();
+
+  @override
   void registerFactory<T extends Object>(
     T Function() factoryFunction, {
     String? instanceName,
@@ -37,6 +48,18 @@ class GetItIocContainer extends IocContainer {
   }) =>
       _guardedReassignment(
         () => _container.registerFactory<T>(factoryFunction,
+            instanceName: instanceName),
+        allowReassignment,
+      );
+
+  @override
+  void registerFactoryAsync<T extends Object>(
+    Future<T> Function() factoryFunc, {
+    String? instanceName,
+    bool allowReassignment = false,
+  }) =>
+      _guardedReassignment(
+        () => _container.registerFactoryAsync<T>(factoryFunc,
             instanceName: instanceName),
         allowReassignment,
       );
@@ -103,6 +126,9 @@ class GetItIocContainer extends IocContainer {
 
   @override
   Future<void> removeScope() => _container.popScope();
+
+  @override
+  bool hasScope(String scopeName) => _container.hasScope(scopeName);
 
   void _guardedReassignment(
     void Function() register,

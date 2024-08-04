@@ -50,6 +50,18 @@ void main() {
     });
 
     test(
+        'Registered mock implementation of registerFactoryAsync() should throw unimplemented error',
+        () {
+      IocContainer.registerContainer(_MockIocContainer());
+
+      expect(
+        () => IocContainer.container
+            .registerFactoryAsync<int>(() => Future<int>.value(0)),
+        throwsUnimplementedError,
+      );
+    });
+
+    test(
         'Registered mock implementation of registerLazySingleton() should throw unimplemented error',
         () {
       IocContainer.registerContainer(_MockIocContainer());
@@ -126,6 +138,50 @@ void main() {
         throwsUnimplementedError,
       );
     });
+
+    test(
+        'Registered mock implementation of hasScope() should throw unimplemented error',
+        () {
+      IocContainer.registerContainer(_MockIocContainer());
+
+      expect(
+        () => IocContainer.container.hasScope('scopeName'),
+        throwsUnimplementedError,
+      );
+    });
+
+    test(
+        'Registered mock implementation of getAsync() should throw unimplemented error',
+        () {
+      IocContainer.registerContainer(_MockIocContainer());
+
+      expect(
+        () => IocContainer.container.getAsync<int>(),
+        throwsUnimplementedError,
+      );
+    });
+
+    test(
+        'Registered mock implementation of getAll() should throw unimplemented error',
+        () {
+      IocContainer.registerContainer(_MockIocContainer());
+
+      expect(
+        () => IocContainer.container.getAll<int>(),
+        throwsUnimplementedError,
+      );
+    });
+
+    test(
+        'Registered mock implementation of getAllAsync() should throw unimplemented error',
+        () {
+      IocContainer.registerContainer(_MockIocContainer());
+
+      expect(
+        () => IocContainer.container.getAllAsync<int>(),
+        throwsUnimplementedError,
+      );
+    });
   });
 }
 
@@ -137,6 +193,25 @@ class _MockIocContainer extends IocContainer {
   }
 
   @override
+  Future<T> getAsync<T extends Object>({String? instanceName}) {
+    throw UnimplementedError(
+        '_MockIocContainer.getAsync has no mock implementation.');
+  }
+
+  @override
+  Iterable<T> getAll<T extends Object>({bool fromAllScopes = false}) {
+    throw UnimplementedError(
+        '_MockIocContainer.getAll has no mock implementation.');
+  }
+
+  @override
+  Future<Iterable<T>> getAllAsync<T extends Object>(
+      {bool fromAllScopes = false}) {
+    throw UnimplementedError(
+        '_MockIocContainer.getAllAsync has no mock implementation.');
+  }
+
+  @override
   void registerFactory<T extends Object>(
     T Function() func, {
     String? instanceName,
@@ -144,6 +219,13 @@ class _MockIocContainer extends IocContainer {
   }) {
     throw UnimplementedError(
         '_MockIocContainer.registerFactory() has no mock implementation.');
+  }
+
+  @override
+  void registerFactoryAsync<T extends Object>(Future<T> Function() factoryFunc,
+      {String? instanceName, bool allowReassignment = false}) {
+    throw UnimplementedError(
+        '_MockIocContainer.registerFactoryAsync() has no mock implementation.');
   }
 
   @override
@@ -198,5 +280,11 @@ class _MockIocContainer extends IocContainer {
   Future<void> removeScope() {
     throw UnimplementedError(
         '_MockIocContainer.removeScope() has no mock implementation.');
+  }
+
+  @override
+  bool hasScope(String scopeName) {
+    throw UnimplementedError(
+        '_MockIocContainer.hasScope() has no mock implementation.');
   }
 }

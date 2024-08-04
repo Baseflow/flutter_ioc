@@ -1,3 +1,8 @@
+## 1.3.0
+
+* Updates and implements flutter_ioc 2.2.0
+* Updates dependency on `get_it` to version 7.7.0.
+
 ## 1.2.1
 
 * Updates dependency on `flutter_ioc` to version 2.1.0.

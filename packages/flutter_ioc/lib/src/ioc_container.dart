@@ -27,6 +27,10 @@ abstract class IocContainer {
   static IocContainer get container => _container;
 
   /// Allows registering a custom implementation of the [IocContainer] interface.
+  ///
+  /// The [iocContainer] parameter must be a concrete implementation of the
+  /// [IocContainer] interface. This implementation will then be used as the
+  /// global IoC container instance.
   static void registerContainer(IocContainer iocContainer) =>
       _container = iocContainer;
 
@@ -77,6 +81,60 @@ abstract class IocContainer {
   T get<T extends Object>({
     String? instanceName,
   });
+
+  /// Gets an instance matching the specified type [T] asynchronously.
+  ///
+  /// Use the [instanceName] parameter to fetch a specific instance that was
+  /// registered with the same name and type.
+  ///
+  /// ```dart
+  /// class Counter {
+  ///   Counter({this.count = 0});
+  ///
+  ///   int count;
+  ///
+  ///   void increment() => count++;
+  ///   void decrement() => count--;
+  /// }
+  ///
+  /// // Register an asynchronous factory method to create a new instance of
+  /// // the Counter class starting at 0.
+  /// IocContainer.container.registerFactoryAsync<Counter>(() async => Counter(), instanceName: 'zero_based_counter');
+  ///
+  /// // Get a new zero-based Counter instance from the IocContainer.
+  /// final Counter zeroBasedCounter = await IocContainer.container.getAsync<Counter>(instanceName: 'zero_based_counter');
+  /// ```
+  Future<T> getAsync<T extends Object>({
+    String? instanceName,
+  });
+
+  /// Gets all instances matching the specified type [T].
+  ///
+  /// ```dart
+  /// class Service {}
+  ///
+  /// // Register multiple instances of the Service class.
+  /// IocContainer.container.registerFactory<Service>(() => Service(), instanceName: 'service1');
+  /// IocContainer.container.registerFactory<Service>(() => Service(), instanceName: 'service2');
+  ///
+  /// // Get all Service instances from the IocContainer.
+  /// final services = IocContainer.container.getAll<Service>();
+  /// ```
+  Iterable<T> getAll<T extends Object>();
+
+  /// Gets all instances matching the specified type [T] asynchronously.
+  ///
+  /// ```dart
+  /// class Service {}
+  ///
+  /// // Register multiple instances of the Service class.
+  /// IocContainer.container.registerFactoryAsync<Service>(() async => Service(), instanceName: 'service1');
+  /// IocContainer.container.registerFactoryAsync<Service>(() async => Service(), instanceName: 'service2');
+  ///
+  /// // Get all Service instances from the IocContainer.
+  /// final services = await IocContainer.container.getAllAsync<Service>();
+  /// ```
+  Future<Iterable<T>> getAllAsync<T extends Object>();
 
   /// Registers a factory method creating a new instance of the specified type [T].
   ///
@@ -132,6 +190,64 @@ abstract class IocContainer {
   /// developers to override an earlier registered factory.
   void registerFactory<T extends Object>(
     T Function() factoryFunction, {
+    String? instanceName,
+    bool allowReassignment = false,
+  });
+
+  /// Registers an asynchronous factory method creating a new instance of the specified type [T].
+  ///
+  /// The registered factory method is called each time the [IocContainer.getAsync]
+  /// method is called.
+  ///
+  /// ```dart
+  /// class Counter {
+  ///   int count = 0;
+  ///
+  ///   void increment() => count++;
+  ///   void decrement() => count--;
+  /// }
+  ///
+  /// // Register an asynchronous factory method to create a new instance of the Counter
+  /// // class each time `IocContainer.container.getAsync<Counter>()` is called.
+  /// IocContainer.container.registerFactoryAsync<Counter>(() async => Counter());
+  ///
+  /// // Get a new Counter instance from the IocContainer
+  /// final Counter counter = await IocContainer.container.getAsync<Counter>();
+  /// ```
+  ///
+  /// Use the [instanceName] parameter to specify different factory methods
+  /// for the specified type:
+  ///
+  /// ```dart
+  /// class Counter {
+  ///   Counter({this.count = 0});
+  ///
+  ///   int count;
+  ///
+  ///   void increment() => count++;
+  ///   void decrement() => count--;
+  /// }
+  ///
+  /// // Register an asynchronous factory method to create a new instance of the Counter
+  /// // class starting at 0.
+  /// IocContainer.container.registerFactoryAsync<Counter>(() async => Counter(), instanceName: 'zero_based_counter');
+  /// // Register an asynchronous factory method to create a new instance of the Counter
+  /// // class starting at 1.
+  /// IocContainer.container.registerFactoryAsync<Counter>(() async => Counter(count: 1), instanceName: 'one_based_counter');
+  ///
+  /// // Get a new zero-based Counter instance from the IocContainer.
+  /// final Counter zeroBasedCounter = await IocContainer.container.getAsync<Counter>(instanceName: 'zero_based_counter');
+  /// // Get a new one-based Counter instance from the IocContainer.
+  /// final Counter oneBasedCounter = await IocContainer.container.getAsync<Counter>(instanceName: 'one_based_counter');
+  /// ```
+  ///
+  /// When set to `true` the [allowReassignment] parameter allows developers to
+  /// replace an existing registration with the one supplied. By default this
+  /// value is `false` as it would normally not be required and in most cases is
+  /// a bug. However in some special cases this might be valuable and allows
+  /// developers to override an earlier registered factory.
+  void registerFactoryAsync<T extends Object>(
+    Future<T> Function() factoryFunc, {
     String? instanceName,
     bool allowReassignment = false,
   });
@@ -238,9 +354,9 @@ abstract class IocContainer {
   /// }
   ///
   /// // Register a new instance of the Counter class, starting at 0.
-  /// IocContainer.container.registerLazySingleton<Counter>(Counter(), 'zero_based_counter');
+  /// IocContainer.container.registerSingleton<Counter>(Counter(), instanceName: 'zero_based_counter');
   /// // Register a new instance of the Counter class, starting at 42.
-  /// IocContainer.container.registerLazySingleton<Counter>(Counter(count: 42), 'fortytwo_based_counter');
+  /// IocContainer.container.registerSingleton<Counter>(Counter(count: 42), instanceName: 'fortytwo_based_counter');
   ///
   /// // Get the zero-based Counter instance from the IocContainer.
   /// final Counter zeroBasedCounter = IocContainer.container.get<Counter>(instanceName: 'zero_based_counter');
@@ -317,15 +433,21 @@ abstract class IocContainer {
     FutureOr<void> Function(T)? onDispose,
   });
 
-  /// Creates a new registation scope.
+  /// Creates a new registration scope.
   ///
   /// Registering types after creating a new scope will hide any previous
   /// registrations of the same type. Scopes will allow for managing different
-  /// live times of your Objects. Scopes are stacked upon each other, when an
-  /// Object is retrieved it will look for it in the top most scope (the one
-  /// created last) first, if the Object isn't located it will look into the
-  /// next scope. This will continue until the Object is found or until there
+  /// lifetimes of your objects. Scopes are stacked upon each other, when an
+  /// object is retrieved it will look for it in the top-most scope (the one
+  /// created last) first. If the object isn't found, it will look into the
+  /// next scope. This will continue until the object is found or until there
   /// are no more scopes (which will result in an error).
+  ///
+  /// The optional [scopeName] parameter can be used to provide a name for the
+  /// scope.
+  ///
+  /// The [onDispose] callback is called when the scope is disposed and can be
+  /// used to clean up additional resources.
   void createScope({
     String? scopeName,
     FutureOr<void> Function()? onDispose,
@@ -339,5 +461,45 @@ abstract class IocContainer {
   /// Provided dispose callbacks on factories and singletons will be called
   /// when removing the scope. If a dispose callback was supplied when
   /// creating the scope it will also be called.
+  ///
+  /// ```dart
+  /// // Create a new scope.
+  /// IocContainer.container.createScope(scopeName: 'child_scope');
+  ///
+  /// // Register a factory method to create a new instance of the Counter
+  /// // class in the child scope.
+  /// IocContainer.container.registerFactory<Counter>(() => Counter());
+  ///
+  /// // Get a new Counter instance from the IocContainer.
+  /// final Counter counter = IocContainer.container.get<Counter>();
+  ///
+  /// // Remove the current scope (child_scope).
+  /// IocContainer.container.removeScope();
+  /// ```
   Future<void> removeScope();
+
+  /// Checks if a scope with the specified name exists.
+  ///
+  /// This method returns `true` if a scope with the provided [scopeName] exists
+  /// in the current container's scope hierarchy, and `false` otherwise.
+  ///
+  /// The [scopeName] parameter specifies the name of the scope to check for.
+  ///
+  /// ```dart
+  /// // Create a new scope with a specific name.
+  /// IocContainer.container.createScope(scopeName: 'myScope');
+  ///
+  /// // Check if the 'myScope' exists.
+  /// final bool scopeExists = IocContainer.container.hasScope('myScope');
+  /// print(scopeExists); // Prints "true".
+  ///
+  /// // Check if a non-existent scope exists.
+  /// final bool nonExistentScope = IocContainer.container.hasScope('nonExistent');
+  /// print(nonExistentScope); // Prints "false".
+  /// ```
+  ///
+  /// Returns:
+  /// - `true` if the scope exists.
+  /// - `false` if the scope does not exist.
+  bool hasScope(String scopeName);
 }
