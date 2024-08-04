@@ -1,19 +1,21 @@
 name: flutter_ioc
 
 on:
+  workflow_dispatch:
+
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
-    - 'packages/flutter_ioc/**'
-    - '.github/workflows/flutter_ioc.yaml'
+      - "packages/flutter_ioc/**"
+      - ".github/workflows/flutter_ioc.yaml"
   pull_request:
-    branches: [ main ]
+    branches: [main]
     paths:
-    - 'packages/flutter_ioc/**'
-    - '.github/workflows/flutter_ioc.yaml'
+      - "packages/flutter_ioc/**"
+      - ".github/workflows/flutter_ioc.yaml"
 
 jobs:
-  format:
+  build:
     name: CI - Flutter IoC
 
     runs-on: ubuntu-latest
@@ -22,11 +24,15 @@ jobs:
       source-directory: ./packages/flutter_ioc
 
     steps:
-      - uses: actions/checkout@v3
-      
-      - uses: subosito/flutter-action@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          channel: "stable"
+          architecture: x64
+          cache: true
 
       - name: Download dependencies
         run: flutter pub get
@@ -35,11 +41,50 @@ jobs:
       - name: Run Flutter Format
         run: dart format --set-exit-if-changed .
         working-directory: ${{env.source-directory}}
-     
+
       - name: Run Flutter Analyzer
         run: flutter analyze
         working-directory: ${{env.source-directory}}
 
-      - name: Run unit tests
-        run: flutter test
+      - name: Run tests
+        run: flutter test --no-pub --coverage
+        working-directory: ${{env.source-directory}}
+
+      - name: Check publish warnings
+        run: dart pub publish --dry-run
+        working-directory: ${{env.source-directory}}
+
+  deployment:
+    if: ${{ github.ref_type == 'tag' }}
+    needs: [build]
+    name: Deploy package
+    permissions:
+      id-token: write
+    runs-on: ubuntu-latest
+
+    env:
+      source-directory: ./packages/flutter_ioc
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # Use shallow clone for faster checkout
+
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          architecture: x64
+          cache: true
+
+      - name: Install dependencies
+        run: dart pub get
+        working-directory: ${{env.source-directory}}
+
+      - name: Publish package
+        run: dart pub publish -v -f
         working-directory: ${{env.source-directory}}
