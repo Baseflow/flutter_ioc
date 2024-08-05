@@ -9,7 +9,7 @@ on:
       - "packages/flutter_ioc_get_it/**"
       - ".github/workflows/flutter_ioc_get_it.yaml"
     tags:
-      - "getit-v[0-9]+.[0-9]+.[0-9]+*"
+      - "^flutter_ioc_getit_v[0-9]+.[0-9]+.[0-9]+*"
   pull_request:
     branches: [main]
     paths:
