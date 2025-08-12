@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -69,7 +69,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1 # Use shallow clone for faster checkout
 
